@@ -1,0 +1,27 @@
+/* Personalizzazioni aggiuntive CSS per la fruizione App Mobile */
+body {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 4px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #1e293b;
+  border-radius: 10px;
+}
+
+/* Modal Open state */
+.modal-open {
+  opacity: 1 !important;
+  pointer-events: auto !important;
+}
+
+.modal-open #modal-content {
+  transform: translateY(0) !important;
+}

@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="it" class="h-full bg-slate-950 text-slate-100">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Outgo — Monthly Expense Tracker</title>
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts & Lucide Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  
+  <link rel="stylesheet" href="giropay.css" />
+</head>
+<body class="h-full font-['Plus_Jakarta_Sans'] antialiased flex flex-col justify-between max-w-md mx-auto relative overflow-x-hidden selection:bg-indigo-500 selection:text-white">
+
+  <!-- Header & Total Card -->
+  <header class="p-5 pt-8 space-y-4">
+    <div class="flex items-center justify-between">
+      <div>
+        <p class="text-xs font-semibold tracking-wider text-indigo-400 uppercase">Rendiconto Mensile</p>
+        <h1 class="text-2xl font-extrabold tracking-tight text-white">Le Tue Spese</h1>
+      </div>
+      <button id="open-modal-btn" class="flex items-center justify-center w-10 h-10 transition-transform bg-indigo-600 rounded-full shadow-lg shadow-indigo-600/30 active:scale-95">
+        <i data-lucide="plus" class="w-6 h-6 text-white"></i>
+      </button>
+    </div>
+
+    <!-- Main Total Card -->
+    <div class="relative overflow-hidden p-6 rounded-3xl bg-gradient-to-br from-slate-900 via-slate-900/90 to-indigo-950/50 border border-slate-800 shadow-2xl">
+      <div class="absolute -right-10 -bottom-10 w-32 h-32 bg-indigo-500/10 rounded-full blur-2xl pointer-events-none"></div>
+      
+      <p class="text-xs font-medium text-slate-400">Totale stimato questo mese</p>
+      <div class="mt-1 flex items-baseline gap-1">
+        <span class="text-4xl font-extrabold tracking-tight text-white" id="total-amount">0.00</span>
+        <span class="text-xl font-bold text-indigo-400">€</span>
+      </div>
+
+      <div class="grid grid-cols-2 gap-3 mt-6 pt-4 border-t border-slate-800/80 text-xs">
+        <div>
+          <span class="text-slate-400 block">Fisse Ricorrenti</span>
+          <span class="font-bold text-slate-200 text-sm" id="total-fixed">€ 0.00</span>
+        </div>
+        <div>
+          <span class="text-slate-400 block">Dinamiche / Rate</span>
+          <span class="font-bold text-amber-400 text-sm" id="total-dynamic">€ 0.00</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Filter / Segmented Control -->
+  <section class="px-5 my-2">
+    <div class="flex p-1 bg-slate-900/80 border border-slate-800/80 rounded-2xl text-xs font-semibold">
+      <button id="tab-all" class="flex-1 py-2 rounded-xl bg-indigo-600 text-white transition-all shadow-sm">Tutte</button>
+      <button id="tab-fixed" class="flex-1 py-2 rounded-xl text-slate-400 transition-all hover:text-white">Fisse</button>
+      <button id="tab-dynamic" class="flex-1 py-2 rounded-xl text-slate-400 transition-all hover:text-white">Dinamiche / Rate</button>
+    </div>
+  </section>
+
+  <!-- Expenses List -->
+  <main class="flex-1 px-5 py-2 overflow-y-auto space-y-3 pb-24" id="expense-list">
+    <!-- Lista generata via JS -->
+  </main>
+
+  <!-- Add Expense Modal -->
+  <div id="modal" class="fixed inset-0 z-50 flex items-end justify-center bg-slate-950/80 backdrop-blur-md opacity-0 pointer-events-none transition-opacity duration-300">
+    <div id="modal-content" class="w-full max-w-md p-6 bg-slate-900 border-t border-slate-800 rounded-t-3xl transform translate-y-full transition-transform duration-300 space-y-4">
+      
+      <div class="flex items-center justify-between pb-2 border-b border-slate-800">
+        <h2 class="text-lg font-bold text-white">Nuova Spesa</h2>
+        <button id="close-modal-btn" class="p-1 text-slate-400 hover:text-white">
+          <i data-lucide="x" class="w-6 h-6"></i>
+        </button>
+      </div>
+
+      <form id="expense-form" class="space-y-4">
+        <div>
+          <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Nome Spesa</label>
+          <input type="text" id="input-title" placeholder="Es. Scalapay - Scarpe, Affitto, Spotify" required
+            class="w-full px-4 py-3 bg-slate-950 border border-slate-800 rounded-xl text-white placeholder-slate-600 focus:outline-none focus:border-indigo-500 text-sm" />
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Importo Mensile (€)</label>
+          <input type="number" step="0.01" id="input-amount" placeholder="0.00" required
+            class="w-full px-4 py-3 bg-slate-950 border border-slate-800 rounded-xl text-white placeholder-slate-600 focus:outline-none focus:border-indigo-500 text-sm" />
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Tipologia</label>
+          <select id="input-type" class="w-full px-4 py-3 bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-indigo-500 text-sm">
+            <option value="fixed">Fissa (Ricorrente ogni mese)</option>
+            <option value="dynamic">Dinamica / Rata (A tempo determinato)</option>
+          </select>
+        </div>
+
+        <!-- Mesi rimanenti (mostrato solo per spese dinamiche) -->
+        <div id="months-container" class="hidden">
+          <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Mesi / Rate Rimanenti</label>
+          <input type="number" id="input-months" min="1" value="3" placeholder="Es. 3 per 3 rate"
+            class="w-full px-4 py-3 bg-slate-950 border border-slate-800 rounded-xl text-white placeholder-slate-600 focus:outline-none focus:border-indigo-500 text-sm" />
+        </div>
+
+        <button type="submit" class="w-full py-3.5 mt-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl transition-all shadow-lg shadow-indigo-600/30 active:scale-[0.98]">
+          Salva Spesa
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
